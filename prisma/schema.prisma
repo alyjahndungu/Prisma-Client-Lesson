@@ -10,29 +10,28 @@ datasource db {
 }
 
 model User {
-  id        BigInt  @id @default(autoincrement())
-  email     String  @unique
-  firstName String?
-  lastName  String?
-  password  String?
-  tokens    Token[]
+  id       String   @id @default(uuid())
+  name     String   @db.VarChar(255)
+  email    String   @unique
+  photo    String?  @default("default.png")
+  verified Boolean? @default(false)
+
+  password String
+  role     RoleEnumType? @default(user)
+
+  verificationCode String? @unique @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, verificationCode])
+  @@index([email, verificationCode])
+  @@map(name: "users")
 }
 
-model Token {
-  id         BigInt    @id @default(autoincrement())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  User       User?     @relation(fields: [userId], references: [id])
-  type       TokenType
-  emailToken String?   @unique
-  valid      Boolean   @default(true)
-  expiration DateTime
-  userId     BigInt?
-}
-
-enum TokenType {
-  EMAIL
-  API
+enum RoleEnumType {
+  user
+  admin
 }
 
 model Artist {

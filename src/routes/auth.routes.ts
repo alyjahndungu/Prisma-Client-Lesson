@@ -8,11 +8,11 @@ import {
 import { deserializeUser } from "../middleware/deserializeUser";
 import { requireUser } from "../middleware/requireUser";
 import { validate } from "../middleware/validate";
-import { loginUserSchema, registerUserSchema } from "../schemas/user.schema";
+import { loginUserSchema, createUserSchema } from "../schemas/user.schema";
 
 const router = express.Router();
 
-router.post("/register", validate(registerUserSchema), registerUserHandler);
+router.post("/register", validate(createUserSchema), registerUserHandler);
 
 router.post("/login", validate(loginUserSchema), loginUserHandler);
 
