@@ -1,0 +1,52 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt  @id @default(autoincrement())
+  email     String  @unique
+  firstName String?
+  lastName  String?
+  password  String?
+  tokens    Token[]
+}
+
+model Token {
+  id         BigInt    @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  User       User?     @relation(fields: [userId], references: [id])
+  type       TokenType
+  emailToken String?   @unique
+  valid      Boolean   @default(true)
+  expiration DateTime
+  userId     BigInt?
+}
+
+enum TokenType {
+  EMAIL
+  API
+}
+
+model Artist {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  songs Song[]
+}
+
+model Song {
+  id       Int     @id @default(autoincrement())
+  title    String
+  content  String?
+  released Boolean @default(false)
+  singer   Artist? @relation(fields: [singerId], references: [id])
+  singerId Int?
+}

@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgres_jamila:
+    image: "postgres"
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    restart: always
+    container_name: "postgres_jamila"
+    privileged: true
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "jamila"
+    networks:
+      - jamila_network
+
+volumes:
+  postgres_volume:
+networks:
+  jamila_network:
