@@ -1,32 +1,36 @@
-import { Token } from "@prisma/client";
-import { Payload } from "@prisma/client/runtime";
+import jwt, { SignOptions } from "jsonwebtoken";
+import config from "config";
 
-const jwt = require("jsonwebtoken");
-const createError = require("http-errors");
-require("dotenv").config();
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+// ? Sign Access or Refresh Token
+export const signJwt = (
+  payload: Object,
+  keyName: "accessTokenPrivateKey" | "refreshTokenPrivateKey",
+  options: SignOptions
+) => {
+  const privateKey = Buffer.from(
+    config.get<string>(keyName),
+    "base64"
+  ).toString("ascii");
+  return jwt.sign(payload, privateKey, {
+    ...(options && options),
+    algorithm: "RS256",
+  });
+};
 
-module.exports = {
-  signAccessToken(payload: Payload) {
-    return new Promise((resolve, reject) => {
-      jwt.sign({ payload }, accessTokenSecret, {}, (err: any, token: Token) => {
-        if (err) {
-          reject(createError.InternalServerError());
-        }
-        resolve(token);
-      });
-    });
-  },
-  verifyAccessToken(token: Token) {
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, accessTokenSecret, (err: any, payload: Payload) => {
-        if (err) {
-          const message =
-            err.name == "JsonWebTokenError" ? "Unauthorized" : err.message;
-          return reject(createError.Unauthorized(message));
-        }
-        resolve(payload);
-      });
-    });
-  },
+// ? Verify Access or Refresh Token
+export const verifyJwt = <T>(
+  token: string,
+  keyName: "accessTokenPublicKey" | "refreshTokenPublicKey"
+): T | null => {
+  try {
+    const publicKey = Buffer.from(
+      config.get<string>(keyName),
+      "base64"
+    ).toString("ascii");
+    const decoded = jwt.verify(token, publicKey) as T;
+
+    return decoded;
+  } catch (error) {
+    return null;
+  }
 };
