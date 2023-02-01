@@ -16,6 +16,13 @@ services:
       POSTGRES_DB: "jamila"
     networks:
       - jamila_network
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redisDB:/data
 
 volumes:
   postgres_volume:

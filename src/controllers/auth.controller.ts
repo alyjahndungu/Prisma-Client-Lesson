@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { CookieOptions, NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { LoginUserInput, RegisterUserInput } from "../schemas/.schema";
+import { LoginUserInput, RegisterUserInput } from "../schemas/user.schema";
 import {
   createUser,
   findUniqueUser,

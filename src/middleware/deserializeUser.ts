@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { omit } from "lodash";
-import { excludedFields, findUniqueUser } from "../service/user.service";
+import { excludedFields, findUniqueUser } from "../service/auth.service";
 import AppError from "../utils/appError";
 import redisClient from "../utils/connectRedis";
 import { verifyJwt } from "../utils/jwt";
